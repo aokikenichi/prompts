@@ -22,7 +22,7 @@
 |Title|概要|想定生成AI|prompt生成過程|Qiita|note|備考|
 |---|---|---|---|---|---|---|
 |非Deep ResearchでDeepResearch|Deep Research機能以外でDeep Research機能風のレポートを作成する|特になしだが推論系推奨|---|---|[M365 Copilot無料版でDeep Researchをする](https://note.com/aokikenichi/n/nf5eaded8eda6)|---|
-|中期経営計画自動生成|中継に必要な情報をDeepResearchし、それに乗っ取り中計下書きを自動生成|調査はDeepResearch、中計生成は特になしだが推論系推奨|[ChatGPT](https://chatgpt.com/share/686d1142-18f4-8010-87df-7cd4c766adf3)|---|---|---|
+|中期経営計画自動生成|中継に必要な情報をDeepResearchし、それに乗っ取り中計下書きを自動生成|調査はDeepResearch、中計生成は特になしだが推論系推奨|[ChatGPT](https://chatgpt.com/share/686d1142-18f4-8010-87df-7cd4c766adf3)|[【プロンプト全公開】中期経営計画自動生成](https://qiita.com/aokikenichi/items/368b4eeea0675bbb46ba)|---|---|
 |短歌自動生成|良い短歌に必要な条件をリサーチしてそれに則って短歌を読む|調査はDeepResearch、短歌を読むのは4oか4.5など|[ChatGPT](https://chatgpt.com/share/6873667d-7380-8010-b64a-9f6c1cda9a43)|---|[短歌をChatGPTで自動生成なんて誰もやらない僕はやってる](https://note.com/aokikenichi/n/nbd0e359dd4e8)|---|
 |画像生成|画家をイメージして画風変換|GPT4o, ImageFXほか画像生成系|[ChatGPT](https://chatgpt.com/share/6873601f-afd0-8010-a3b1-20c6f75f17df)|---|[【プロンプト全公開】ChatGPT/ImageFXで歌麿になろう](https://note.com/aokikenichi/n/nefb414cec1ee)|---|
 
