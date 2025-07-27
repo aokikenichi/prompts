@@ -17,6 +17,12 @@
 |JDLA Generative AI test資格試験対策|JDLA Generative AI testの問題練習|特になしだが推論系推奨|[ChatGPT](https://chatgpt.com/share/68735f50-aa0c-8010-9aee-78afbb6ea1cc)|[JDLA Generative AI test学習メタプロンプト](https://qiita.com/aokikenichi/items/9e56602145a66cf7fcd9)|---|---|
 |生成AIの暴走？|今までにないプロンプトを提案してと追い込んだ結果。再起的に発展？袋小路？へ|特になし|[ChatGPT](https://chatgpt.com/share/687361fd-ca08-8010-badc-864d66b222b6)|---|[ChatGPTの暴走、これは何？](https://note.com/aokikenichi/n/nc987ed66b401)|---|
 
+## 論文手法を模倣
+- APIなどを駆使したエージェント的な研究成果をメタプロンプト・プロンプトだけで試そうという試み
+
+|Title|概要|想定生成AI|prompt生成過程|Qiita|note|備考|
+|---|---|---|---|---|---|---|
+|発想系|新しい発想を生むためのブレスと用途など|特になし|[ChatGPT](https://chatgpt.com/share/6885d96b-e7f0-8010-a3b2-4b728e9c1dbe)|---|[潜在空間イノベーション Latent‑Explorer v0.1](https://note.com/aokikenichi/n/n712030a89506)|元論文[Large Language Models as Innovators: A Framework to Leverage Latent Space Exploration for Novelty Discovery](https://arxiv.org/pdf/2507.13874)<br/>平均にまとまりがちな生成AIの能力を解き放つ研究。|
 
 ## 特定目的のプロンプト
 |Title|概要|想定生成AI|prompt生成過程|Qiita|note|備考|
