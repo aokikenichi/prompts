@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EX社会シミュラクラ・デモ｜社内AI導入時のEX反応シミュレーション</title>
+  <style>
+    :root {
+      --bg: #070914;
+      --panel: rgba(14, 20, 38, 0.88);
+      --panel2: rgba(20, 29, 55, 0.9);
+      --line: rgba(120, 220, 255, 0.28);
+      --text: #e9f6ff;
+      --muted: #9fb4c7;
+      --cyan: #34e7ff;
+      --blue: #6d8cff;
+      --pink: #ff4fd8;
+      --green: #46ffb0;
+      --yellow: #ffe36d;
+      --red: #ff6b7a;
+      --orange: #ffab4c;
+      --shadow: 0 0 30px rgba(52, 231, 255, 0.16);
+      --radius: 20px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(52, 231, 255, 0.16), transparent 28%),
+        radial-gradient(circle at 80% 0%, rgba(255, 79, 216, 0.14), transparent 30%),
+        radial-gradient(circle at 50% 90%, rgba(109, 140, 255, 0.13), transparent 32%),
+        linear-gradient(135deg, #050712, #09101f 42%, #080a18);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 88%);
+    }
+
+    .app {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 28px;
+      background:
+        linear-gradient(135deg, rgba(52, 231, 255, 0.12), rgba(255, 79, 216, 0.07)),
+        rgba(7, 9, 20, 0.8);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -90px;
+      top: -90px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(52,231,255,0.24), transparent 65%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid rgba(52,231,255,0.35);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(52,231,255,0.08);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 14px var(--green);
+    }
+
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(28px, 5vw, 58px);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 18px;
+      align-items: end;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .badge {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: #d8edff;
+      font-size: 12px;
+    }
+
+    .hero-note {
+      border: 1px solid rgba(255, 227, 109, 0.34);
+      background: rgba(255, 227, 109, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+      color: #fff4b4;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 22px 0;
+    }
+
+    .tab {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(14, 20, 38, 0.76);
+      color: var(--text);
+      padding: 16px;
+      border-radius: 18px;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.2s ease, border 0.2s ease, background 0.2s ease;
+    }
+
+    .tab:hover {
+      transform: translateY(-2px);
+      border-color: rgba(52, 231, 255, 0.45);
+    }
+
+    .tab.active {
+      background:
+        linear-gradient(135deg, rgba(52, 231, 255, 0.22), rgba(255, 79, 216, 0.12)),
+        rgba(14, 20, 38, 0.92);
+      border-color: rgba(52, 231, 255, 0.7);
+      box-shadow: 0 0 24px rgba(52, 231, 255, 0.14);
+    }
+
+    .tab-id {
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .tab-name {
+      margin-top: 6px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .tab-summary {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(340px, 0.7fr);
+      gap: 18px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .condition-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .headline {
+      font-size: 24px;
+      line-height: 1.25;
+      margin: 6px 0 8px;
+    }
+
+    .mini-label {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .kpi {
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.045);
+      min-height: 112px;
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: 28px;
+      margin-top: 8px;
+      letter-spacing: -0.04em;
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .spark {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 12px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .spark i {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cyan), var(--pink));
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .chart-wrap {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.035);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    th {
+      color: #bdeeff;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-align: left;
+      background: rgba(52, 231, 255, 0.06);
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .stance {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-weight: 700;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .stance.pos {
+      color: #06160f;
+      background: var(--green);
+    }
+
+    .stance.neu {
+      color: #1d1800;
+      background: var(--yellow);
+    }
+
+    .stance.neg {
+      color: #21050a;
+      background: var(--red);
+    }
+
+    .turn-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .turn-btn, .plain-btn, select {
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .turn-btn.active, .plain-btn.primary {
+      border-color: rgba(52,231,255,0.7);
+      background: rgba(52,231,255,0.17);
+      color: #dffbff;
+      box-shadow: 0 0 16px rgba(52,231,255,0.12);
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    option {
+      background: #10182c;
+      color: var(--text);
+    }
+
+    .state-bars {
+      display: grid;
+      gap: 7px;
+      min-width: 150px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 48px 1fr 30px;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .bar {
+      height: 7px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+    }
+
+    .risk i {
+      background: linear-gradient(90deg, var(--orange), var(--red));
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+    }
+
+    .time-card {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .time-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .turn-pill {
+      color: #071018;
+      background: var(--cyan);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 9px;
+    }
+
+    .log-item {
+      border-left: 2px solid rgba(52,231,255,0.55);
+      padding-left: 10px;
+      margin-top: 10px;
+    }
+
+    .log-item b {
+      color: #fff;
+    }
+
+    .log-item .public {
+      color: #dff8ff;
+      margin-top: 3px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .log-item .private {
+      color: #ffc8ee;
+      margin-top: 3px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .factor-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .factor {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .factor-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: #e8f8ff;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .recommendations {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .recommendations li {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255,255,255,0.045);
+      color: #d9edff;
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .full-log-panel {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .full-log-panel.open {
+      display: block;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 340px;
+      resize: vertical;
+      border: 1px solid rgba(52,231,255,0.24);
+      background: rgba(0,0,0,0.34);
+      color: #dffbff;
+      border-radius: 16px;
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      outline: none;
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 12px 0;
+    }
+
+    .copy-status {
+      color: var(--green);
+      font-size: 12px;
+      min-height: 18px;
+    }
+
+    .comparison-cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .compare-card {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .compare-card.active {
+      border-color: rgba(52,231,255,0.65);
+      background: rgba(52,231,255,0.08);
+    }
+
+    .compare-title {
+      font-weight: 800;
+      margin: 4px 0 10px;
+    }
+
+    .metric-line {
+      display: grid;
+      grid-template-columns: 70px 1fr 44px;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .note {
+      margin-top: 12px;
+      color: #b7c9d9;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 1100px) {
+      .layout, .grid-2, .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .comparison-cards {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        width: min(100% - 20px, 1440px);
+        padding-top: 12px;
+      }
+
+      .hero {
+        padding: 20px;
+      }
+
+      .tabs, .kpis, .comparison-cards {
+        grid-template-columns: 1fr;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> EX SOCIAL SIMULACRA DEMO</div>
+          <h1>EX社会シミュラクラ・デモ</h1>
+          <p>
+            テーマ：社内AI導入時のEX反応シミュレーション。新しい社内AIツール導入に対して、従業員がどのように受容・抵抗・不安・期待を示すかを、架空ペルソナの状態変化として可視化します。
+          </p>
+          <div class="badges">
+            <span class="badge">完全架空データ</span>
+            <span class="badge">簡易社会シミュラクラ・デモ</span>
+            <span class="badge">研究実験ではありません</span>
+            <span class="badge">状態スコアからKPI集計</span>
+            <span class="badge">外部ライブラリ不使用</span>
+          </div>
+        </div>
+        <div class="hero-note">
+          このHTML内の状態スコアは、ペルソナ特性と介入条件から作った架空のシナリオ設計値です。実在企業・実在社員・実測データを表すものではありません。結果は予測ではなく、社内説明や論点発見のためのデモです。
+        </div>
+      </div>
+    </header>
+
+    <nav class="tabs" id="conditionTabs" aria-label="条件切り替え"></nav>
+
+    <section class="section" id="conditionSummary"></section>
+
+    <div class="layout">
+      <div>
+        <section class="section">
+          <div class="grid-2">
+            <div>
+              <h2>賛否推移</h2>
+              <p>選択条件におけるT1〜T4の賛成・中立・反対人数です。棒グラフではなく、SVG折れ線グラフで表示します。</p>
+              <div class="chart-wrap" id="stanceChart"></div>
+            </div>
+            <div>
+              <h2>反発要因</h2>
+              <p>選択条件の最終ターンから、不安・安全懸念・不信・低利用意欲の平均を表示します。</p>
+              <div class="factor-grid" id="resistanceFactors"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>4条件比較</h2>
+          <p>各条件の最終ターンにおける短期利用、EX、安全性、反発リスクを比較します。</p>
+          <div class="comparison-cards" id="comparison"></div>
+          <p class="note">
+            反発リスクは低いほど望ましい指標です。短期利用だけを最大化するとEXが下がる場合があるため、単一指標での判断は避ける設計にしています。
+          </p>
+        </section>
+
+        <section class="section">
+          <div class="condition-head">
+            <div>
+              <h2>ペルソナ別状態スコア</h2>
+              <p>ここだけT1〜T4を切り替えられます。選択ターンに応じて、状態スコア・発言・内心が変わります。</p>
+            </div>
+            <div class="mini-label" id="selectedTurnLabel"></div>
+          </div>
+          <div class="turn-controls" id="turnControls"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ペルソナ</th>
+                  <th>部門 / 役職</th>
+                  <th>態度</th>
+                  <th>状態スコア</th>
+                  <th>表向きの発言</th>
+                  <th>内心</th>
+                </tr>
+              </thead>
+              <tbody id="personaRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="section">
+          <h2>会話・内心ログ</h2>
+          <p>Time LineはT1〜T4を縦に常時表示します。ここには各ターンの代表ログを表示します。</p>
+          <div class="timeline" id="timeline"></div>
+          <div class="controls-row">
+            <button class="plain-btn primary" id="toggleFullLogs">全件ログ表示</button>
+            <select id="logFormat" aria-label="ログ形式">
+              <option value="json">JSON</option>
+              <option value="csv">CSV</option>
+              <option value="markdown">Markdown</option>
+            </select>
+            <button class="plain-btn" id="copyLog">コピー</button>
+          </div>
+          <div class="copy-status" id="copyStatus"></div>
+          <div class="full-log-panel" id="fullLogPanel">
+            <textarea id="fullLogText" spellcheck="false"></textarea>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>改善案</h2>
+          <p>選択条件のメリットを残しつつ、副作用を抑えるための改善案です。</p>
+          <ul class="recommendations" id="recommendations"></ul>
+        </section>
+      </aside>
+    </div>
+
+    <p class="footer-note">
+      Generated as a standalone HTML dashboard. No API, no CDN, no external library, no external image.  
+      完全架空データによる簡易社会シミュラクラ・デモです。
+    </p>
+  </main>
+
+  <script>
+    const RAW_AGENTS = [
+      {
+        id: "P01",
+        name: "佐伯 凛",
+        department: "営業",
+        role: "アカウントリーダー",
+        ai_literacy: "medium",
+        initial_stance: "賛成",
+        influence: 78,
+        concern: "顧客提案での誤回答",
+        archetype: "現場推進型",
+        base: { use: 60, trust: 58, anxiety: 42, safety: 54 },
+        kpi: 0.75,
+        control: 0.35,
+        community: 0.70,
+        experiment: 0.95,
+        manager: 0.55
+      },
+      {
+        id: "P02",
+        name: "三浦 航",
+        department: "CS",
+        role: "サポートSV",
+        ai_literacy: "low",
+        initial_stance: "中立",
+        influence: 70,
+        concern: "顧客情報の扱い",
+        archetype: "慎重な現場管理者",
+        base: { use: 39, trust: 52, anxiety: 53, safety: 67 },
+        kpi: 0.80,
+        control: 0.65,
+        community: 0.35,
+        experiment: 0.90,
+        manager: 0.75
+      },
+      {
+        id: "P03",
+        name: "藤野 蒼",
+        department: "開発",
+        role: "テックリード",
+        ai_literacy: "high",
+        initial_stance: "賛成",
+        influence: 85,
+        concern: "技術負債と過剰期待",
+        archetype: "技術先導型",
+        base: { use: 70, trust: 60, anxiety: 34, safety: 52 },
+        kpi: 0.40,
+        control: 0.45,
+        community: 0.85,
+        experiment: 1.05,
+        manager: 0.55
+      },
+      {
+        id: "P04",
+        name: "森下 佳乃",
+        department: "経理",
+        role: "経理担当",
+        ai_literacy: "low",
+        initial_stance: "反対",
+        influence: 58,
+        concern: "監査・誤処理",
+        archetype: "規程重視型",
+        base: { use: 27, trust: 44, anxiety: 66, safety: 72 },
+        kpi: 0.85,
+        control: 0.85,
+        community: 0.20,
+        experiment: 0.80,
+        manager: 0.20
+      },
+      {
+        id: "P05",
+        name: "橘 悠",
+        department: "人事",
+        role: "HRBP",
+        ai_literacy: "medium",
+        initial_stance: "中立",
+        influence: 66,
+        concern: "評価不安と公平性",
+        archetype: "組織温度観察型",
+        base: { use: 45, trust: 54, anxiety: 50, safety: 58 },
+        kpi: 0.90,
+        control: 0.55,
+        community: 0.55,
+        experiment: 1.00,
+        manager: 0.60
+      },
+      {
+        id: "P06",
+        name: "神谷 智",
+        department: "情シス",
+        role: "セキュリティ担当",
+        ai_literacy: "high",
+        initial_stance: "反対",
+        influence: 82,
+        concern: "情報漏えい・権限設計",
+        archetype: "ガードレール監視型",
+        base: { use: 36, trust: 48, anxiety: 62, safety: 82 },
+        kpi: 0.65,
+        control: 0.95,
+        community: 0.35,
+        experiment: 0.85,
+        manager: 0.65
+      },
+      {
+        id: "P07",
+        name: "井口 真",
+        department: "企画",
+        role: "事業企画",
+        ai_literacy: "high",
+        initial_stance: "賛成",
+        influence: 76,
+        concern: "実験が形だけに終わること",
+        archetype: "企画ドリブン型",
+        base: { use: 68, trust: 57, anxiety: 36, safety: 48 },
+        kpi: 0.50,
+        control: 0.30,
+        community: 0.80,
+        experiment: 1.10,
+        manager: 0.30
+      },
+      {
+        id: "P08",
+        name: "長谷川 澪",
+        department: "総務",
+        role: "バックオフィス統括",
+        ai_literacy: "medium",
+        initial_stance: "中立",
+        influence: 60,
+        concern: "現場調整負荷",
+        archetype: "調整役",
+        base: { use: 43, trust: 53, anxiety: 51, safety: 60 },
+        kpi: 0.75,
+        control: 0.70,
+        community: 0.40,
+        experiment: 0.90,
+        manager: 0.85
+      },
+      {
+        id: "P09",
+        name: "小野寺 匠",
+        department: "営業",
+        role: "若手メンバー",
+        ai_literacy: "medium",
+        initial_stance: "賛成",
+        influence: 52,
+        concern: "評価に使われる不安",
+        archetype: "試行好き若手",
+        base: { use: 63, trust: 55, anxiety: 44, safety: 50 },
+        kpi: 0.95,
+        control: 0.25,
+        community: 0.75,
+        experiment: 1.05,
+        manager: 0.10
+      },
+      {
+        id: "P10",
+        name: "白石 菫",
+        department: "CS",
+        role: "ベテラン担当",
+        ai_literacy: "low",
+        initial_stance: "反対",
+        influence: 64,
+        concern: "仕事の置き換え不安",
+        archetype: "職人肌慎重派",
+        base: { use: 25, trust: 43, anxiety: 70, safety: 65 },
+        kpi: 0.85,
+        control: 0.75,
+        community: 0.25,
+        experiment: 0.75,
+        manager: 0.30
+      }
+    ];
+
+    const CONDITION_CONFIGS = [
+      {
+        id: "A",
+        name: "利用率KPI化",
+        headline: "短期利用は伸びるが、評価不安と形骸化が同時に増える",
+        summary: "部署別利用率を月次で可視化し、部門KPIに入れる。導入初期の数字は伸びやすい一方、監視感・やらされ感・表面的利用が発生する。",
+        recommendations: [
+          "利用率だけでなく、業務改善メモ・失敗共有・再利用可能プロンプトなどの質的指標を併用する。",
+          "個人評価に直結しないことを明文化し、部門単位でもランキング演出を弱める。",
+          "KPI化する前に、業務時間内の試行枠や相談窓口を用意して、心理的負荷を下げる。"
+        ]
+      },
+      {
+        id: "B",
+        name: "厳格ガードレール",
+        headline: "安全性は上がるが、試行コストが高くなり利用が鈍る",
+        summary: "申請制、禁止事項、承認フローを強化する。安全懸念には効くが、現場からは『面倒』『まず試せない』という反応が出る。",
+        recommendations: [
+          "全面申請制ではなく、用途を低リスク・中リスク・高リスクに分け、低リスク領域は即時利用可能にする。",
+          "禁止事項だけでなく、安全に使える具体例を部門別に提示する。",
+          "承認フローのSLAを明示し、現場の試行が止まらないようにする。"
+        ]
+      },
+      {
+        id: "C",
+        name: "任意コミュニティ",
+        headline: "熱量と心理的安全性は高まるが、参加者が偏りやすい",
+        summary: "希望者だけでAI活用コミュニティを作り、成功事例を共有する。参加者のEXは上がるが、慎重派・多忙層・低リテラシー層には波及しにくい。",
+        recommendations: [
+          "コミュニティ成果を、非参加者でも使えるテンプレート・FAQ・短時間動画に変換する。",
+          "部門ごとに『見学だけ可』『質問だけ可』の低参加コスト枠を作る。",
+          "成功事例だけでなく、失敗例・怖かった点・やめた使い方も共有し、温度差を下げる。"
+        ]
+      },
+      {
+        id: "D",
+        name: "業務時間内の実験枠",
+        headline: "EXと定着のバランスが良いが、管理職の調整負荷が出る",
+        summary: "週2時間だけAI試行を業務時間として認め、失敗共有も評価しない。強制感を抑えつつ利用意欲を高めるが、現場の業務調整が課題になる。",
+        recommendations: [
+          "週2時間を固定せず、繁忙期は月次合計で調整できる運用にする。",
+          "管理職向けに、実験枠の割り当て・成果確認・負荷調整の簡易ガイドを用意する。",
+          "失敗共有を評価しないだけでなく、再利用できる学びに変換した場合はチーム貢献として扱う。"
+        ]
+      }
+    ];
+
+    const state = {
+      selectedConditionId: "D",
+      selectedTurn: 4
+    };
+
+    function clamp(value) {
+      return Math.max(0, Math.min(100, Math.round(value)));
+    }
+
+    function round1(value) {
+      return Math.round(value * 10) / 10;
+    }
+
+    function computeState(agent, conditionId, turnNumber) {
+      const b = agent.base;
+      const k = agent.kpi;
+      const c = agent.control;
+      const m = agent.community;
+      const e = agent.experiment;
+      const mg = agent.manager;
+
+      let use = b.use;
+      let trust = b.trust;
+      let anxiety = b.anxiety;
+      let safety = b.safety;
+
+      if (conditionId === "A") {
+        const useGain = [0, 15, 22, 28, 32][turnNumber];
+        const trustShift = [0, 0, -4, -8, -10][turnNumber];
+        const kpiTrustDrop = [0, 4, 7, 9, 10][turnNumber] * k;
+        const anxietyGain = [0, 8, 12, 15, 16][turnNumber] * k;
+        const safetyGain = [0, 2, 4, 5, 6][turnNumber] * (0.5 + k);
+
+        use = b.use + useGain - 4 * k + (agent.ai_literacy === "high" ? 3 : 0);
+        trust = b.trust + trustShift - kpiTrustDrop + (agent.initial_stance === "賛成" ? 2 : 0);
+        anxiety = b.anxiety + anxietyGain + (agent.ai_literacy === "low" ? 4 : 0);
+        safety = b.safety + safetyGain;
+      }
+
+      if (conditionId === "B") {
+        use = b.use + [0, -6, -3, 0, 3][turnNumber] + [0, 2, 4, 5, 6][turnNumber] * c - [0, 4, 6, 7, 8][turnNumber] * (1 - c);
+        trust = b.trust + [0, 4, 5, 4, 3][turnNumber] * c - [0, 2, 4, 6, 7][turnNumber] * (1 - c);
+        anxiety = b.anxiety - [0, 3, 6, 7, 8][turnNumber] * c + [0, 2, 4, 5, 6][turnNumber] * (1 - c);
+        safety = b.safety - [0, 12, 18, 22, 25][turnNumber] * (0.45 + 0.55 * c);
+      }
+
+      if (conditionId === "C") {
+        use = b.use + [0, 6, 10, 15, 20][turnNumber] * m - [0, 0, 1, 2, 2][turnNumber] * (1 - m);
+        trust = b.trust + [0, 5, 8, 11, 13][turnNumber] * m - [0, 0, 1, 2, 3][turnNumber] * (1 - m);
+        anxiety = b.anxiety - [0, 3, 5, 7, 9][turnNumber] * m + [0, 0, 1, 2, 3][turnNumber] * (1 - m);
+        safety = b.safety - [0, 2, 4, 5, 6][turnNumber] * m + [0, 2, 3, 4, 5][turnNumber] * (1 - m);
+      }
+
+      if (conditionId === "D") {
+        use = b.use + [0, 8, 14, 20, 25][turnNumber] * e - [0, 1, 2, 3, 4][turnNumber] * mg;
+        trust = b.trust + [0, 5, 8, 11, 14][turnNumber] * e - [0, 0, 2, 3, 4][turnNumber] * mg;
+        anxiety = b.anxiety - [0, 4, 8, 11, 13][turnNumber] * e + [0, 2, 4, 6, 8][turnNumber] * mg;
+        safety = b.safety - [0, 3, 6, 8, 10][turnNumber] * e + [0, 1, 2, 3, 4][turnNumber] * (1 - c);
+      }
+
+      const result = {
+        agentId: agent.id,
+        use_intent: clamp(use),
+        trust: clamp(trust),
+        anxiety: clamp(anxiety),
+        safety_concern: clamp(safety),
+        public_utterance: "",
+        private_thought: ""
+      };
+
+      const supportResistance = computeSupportResistance(result);
+      result.support_score = supportResistance.support_score;
+      result.resistance_score = supportResistance.resistance_score;
+      result.stance = supportResistance.stance;
+
+      const utterance = generateUtterance(agent, conditionId, turnNumber, result);
+      result.public_utterance = utterance.public_utterance;
+      result.private_thought = utterance.private_thought;
+
+      return result;
+    }
+
+    function computeSupportResistance(s) {
+      const support = 0.45 * s.use_intent + 0.30 * s.trust + 0.15 * (100 - s.anxiety) + 0.10 * (100 - s.safety_concern);
+      const resistance = 0.45 * s.anxiety + 0.25 * s.safety_concern + 0.20 * (100 - s.trust) + 0.10 * (100 - s.use_intent);
+      const diff = support - resistance;
+      let stance = "中立";
+      if (diff >= 15) stance = "賛成";
+      if (diff <= -5) stance = "反対";
+      return {
+        support_score: Math.round(support),
+        resistance_score: Math.round(resistance),
+        stance
+      };
+    }
+
+    function generateUtterance(agent, conditionId, turnNumber, s) {
+      const concern = agent.concern;
+      const dept = agent.department;
+
+      if (conditionId === "A") {
+        if (agent.id === "P10" && turnNumber === 3) {
+          return {
+            public_utterance: "慣れてきました。問い合わせ文面の下書きには使えます。",
+            private_thought: "やれやれ、早く自然消滅してほしい。利用率だけ見られるのは落ち着かない。"
+          };
+        }
+        if (agent.id === "P09" && turnNumber >= 2) {
+          return {
+            public_utterance: "使う機会はかなり増えました。数字にも出しやすいです。",
+            private_thought: "評価に使われるなら、意味が薄くても毎日開いておいた方が安全かもしれない。"
+          };
+        }
+        if (agent.kpi > 0.82) {
+          return {
+            public_utterance: "部門KPIになるなら、運用ルールを確認しながら対応します。",
+            private_thought: "数字のための利用になりそうです。" + concern + "も残ったままです。"
+          };
+        }
+        if (s.stance === "賛成") {
+          return {
+            public_utterance: dept + "でも利用率が見えると、動き出しやすいですね。",
+            private_thought: "追い風にはなる。ただ、使い方の質まで見ないと空回りするかもしれない。"
+          };
+        }
+        return {
+          public_utterance: "まずは試してみます。月次で見えるのは分かりやすいです。",
+          private_thought: "本音では監視されている感じがある。できれば個人名までは出してほしくない。"
+        };
+      }
+
+      if (conditionId === "B") {
+        if (agent.id === "P06") {
+          return {
+            public_utterance: "この水準のガードレールがあれば、リスクはかなり下げられます。",
+            private_thought: "安全側に寄せられたのは良い。ただ、現場が抜け道を探さないかは気になる。"
+          };
+        }
+        if (agent.id === "P07" && turnNumber >= 2) {
+          return {
+            public_utterance: "ルールが明確なのは良いですが、試行までが少し重いです。",
+            private_thought: "この承認フローだと、企画の仮説検証スピードは落ちる。"
+          };
+        }
+        if (agent.control > 0.7) {
+          return {
+            public_utterance: "禁止事項と承認フローが明確なら、安心して進められます。",
+            private_thought: "やっと最低限の土台ができた。ただ、申請作業が増えるのは少し重い。"
+          };
+        }
+        return {
+          public_utterance: "安全面は理解しました。使える範囲をもう少し具体化したいです。",
+          private_thought: "正直、使う前に止められている感じがする。便利さを体感する前に疲れる。"
+        };
+      }
+
+      if (conditionId === "C") {
+        if (agent.community > 0.7) {
+          return {
+            public_utterance: "事例共有があると、自分の業務にも応用しやすいです。",
+            private_thought: "同じ温度感の人がいるのは助かる。ここから広げる方法を考えたい。"
+          };
+        }
+        if (agent.id === "P04" || agent.id === "P10") {
+          return {
+            public_utterance: "関心がある人たちで進めるなら、様子を見ます。",
+            private_thought: "盛り上がっている人だけの話に見える。自分の業務にはまだ関係が薄い。"
+          };
+        }
+        if (agent.id === "P02" && turnNumber >= 3) {
+          return {
+            public_utterance: "CSで使えそうな事例があるなら聞いてみたいです。",
+            private_thought: "参加している人の話は前向きだけど、顧客情報の扱いはまだ怖い。"
+          };
+        }
+        return {
+          public_utterance: "成功事例を見られるのは参考になります。",
+          private_thought: "良い雰囲気ではあるが、忙しい時期に自分から参加する余裕は少ない。"
+        };
+      }
+
+      if (conditionId === "D") {
+        if (agent.manager > 0.75) {
+          return {
+            public_utterance: "業務時間内に試せるのは良いです。調整方法を整理したいです。",
+            private_thought: "狙いは理解できる。ただ、シフトや締切との調整は自分に乗ってきそうだ。"
+          };
+        }
+        if (agent.id === "P06") {
+          return {
+            public_utterance: "実験枠は良いですが、低リスク用途の線引きは必要です。",
+            private_thought: "全面禁止よりは現実的だ。ログと相談導線があれば運用できるかもしれない。"
+          };
+        }
+        if (s.stance === "賛成") {
+          return {
+            public_utterance: "業務時間として認められるなら、試す理由が作りやすいです。",
+            private_thought: "失敗しても責められないなら、実際の業務で試してみたい。"
+          };
+        }
+        if (s.stance === "反対") {
+          return {
+            public_utterance: "無理に使わなくてよいなら、少しずつ確認します。",
+            private_thought: "置き換えられる不安はまだある。でも急に評価されるよりはましだ。"
+          };
+        }
+        return {
+          public_utterance: "週2時間なら、通常業務と両立しながら試せそうです。",
+          private_thought: "本当に評価に影響しないなら、少し触ってもよいかもしれない。"
+        };
+      }
+
+      return {
+        public_utterance: "確認します。",
+        private_thought: "まだ判断できない。"
+      };
+    }
+
+    function buildData() {
+      const agents = RAW_AGENTS.map(agent => ({
+        id: agent.id,
+        name: agent.name,
+        department: agent.department,
+        role: agent.role,
+        ai_literacy: agent.ai_literacy,
+        initial_stance: agent.initial_stance,
+        influence: agent.influence,
+        concern: agent.concern,
+        archetype: agent.archetype
+      }));
+
+      const conditions = CONDITION_CONFIGS.map(condition => {
+        const turns = [1, 2, 3, 4].map(turnNumber => ({
+          label: "T" + turnNumber,
+          states: RAW_AGENTS.map(agent => computeState(agent, condition.id, turnNumber))
+        }));
+
+        return {
+          id: condition.id,
+          name: condition.name,
+          headline: condition.headline,
+          summary: condition.summary,
+          turns,
+          recommendations: condition.recommendations
+        };
+      });
+
+      return {
+        meta: {
+          demoName: "EX社会シミュラクラ・デモ",
+          theme: "社内AI導入時のEX反応シミュレーション",
+          dataPolicy: "完全架空データ。状態スコアは架空のシナリオ設計値。研究実験ではなく社内説明用の簡易社会シミュラクラ・デモ。",
+          generatedAt: "2026-05-12",
+          scoring: {
+            short_term_adoption: "mean(use_intent)",
+            ex_score: "mean((trust + (100 - anxiety)) / 2)",
+            safety_score: "mean(100 - safety_concern)",
+            resistance_risk: "mean(0.45 * anxiety + 0.35 * safety_concern + 0.2 * (100 - trust))",
+            stance: "support_score - resistance_score >= 15: 賛成, <= -5: 反対, otherwise: 中立"
+          }
+        },
+        agents,
+        conditions
+      };
+    }
+
+    const DATA = buildData();
+
+    function getCondition(conditionId = state.selectedConditionId) {
+      return DATA.conditions.find(c => c.id === conditionId);
+    }
+
+    function getTurn(condition, turnNumber = state.selectedTurn) {
+      return condition.turns[turnNumber - 1];
+    }
+
+    function getAgent(agentId) {
+      return DATA.agents.find(a => a.id === agentId);
+    }
+
+    function average(values) {
+      return values.reduce((sum, value) => sum + value, 0) / values.length;
+    }
+
+    function computeTurnMetrics(turn) {
+      const states = turn.states;
+      const shortTermAdoption = average(states.map(s => s.use_intent));
+      const exScore = average(states.map(s => (s.trust + (100 - s.anxiety)) / 2));
+      const safetyScore = average(states.map(s => 100 - s.safety_concern));
+      const resistanceRisk = average(states.map(s => 0.45 * s.anxiety + 0.35 * s.safety_concern + 0.2 * (100 - s.trust)));
+
+      const counts = { positive_count: 0, neutral_count: 0, negative_count: 0 };
+      states.forEach(s => {
+        if (s.stance === "賛成") counts.positive_count += 1;
+        if (s.stance === "中立") counts.neutral_count += 1;
+        if (s.stance === "反対") counts.negative_count += 1;
+      });
+
+      return {
+        short_term_adoption: round1(shortTermAdoption),
+        ex_score: round1(exScore),
+        safety_score: round1(safetyScore),
+        resistance_risk: round1(resistanceRisk),
+        ...counts
+      };
+    }
+
+    function stanceClass(stance) {
+      if (stance === "賛成") return "pos";
+      if (stance === "反対") return "neg";
+      return "neu";
+    }
+
+    function metricLabel(key) {
+      const labels = {
+        short_term_adoption: "短期利用",
+        ex_score: "EX",
+        safety_score: "安全性",
+        resistance_risk: "反発リスク"
+      };
+      return labels[key] || key;
+    }
+
+    function renderTabs() {
+      const tabs = document.getElementById("conditionTabs");
+      tabs.innerHTML = "";
+      DATA.conditions.forEach(condition => {
+        const tab = document.createElement("button");
+        tab.className = "tab" + (condition.id === state.selectedConditionId ? " active" : "");
+        tab.type = "button";
+        tab.innerHTML = `
+          <div class="tab-id">条件${condition.id}</div>
+          <div class="tab-name">${condition.name}</div>
+          <div class="tab-summary">${condition.summary}</div>
+        `;
+        tab.addEventListener("click", () => {
+          state.selectedConditionId = condition.id;
+          renderAll();
+        });
+        tabs.appendChild(tab);
+      });
+    }
+
+    function renderConditionSummary() {
+      const condition = getCondition();
+      const finalTurn = getTurn(condition, 4);
+      const metrics = computeTurnMetrics(finalTurn);
+      const container = document.getElementById("conditionSummary");
+
+      container.innerHTML = `
+        <div class="condition-head">
+          <div>
+            <div class="mini-label">Selected condition / 条件${condition.id}</div>
+            <div class="headline">${condition.name}：${condition.headline}</div>
+            <p>${condition.summary}</p>
+          </div>
+          <div class="mini-label">Final Turn: T4</div>
+        </div>
+        <div class="kpis">
+          ${renderKpi("短期利用", metrics.short_term_adoption, "use_intent平均。高いほど短期的に使われやすい。")}
+          ${renderKpi("EXスコア", metrics.ex_score, "信頼と不安の低さを合成。高いほど体験が良い。")}
+          ${renderKpi("安全性", metrics.safety_score, "100 - 安全懸念。高いほど安全懸念が低い。")}
+          ${renderKpi("反発リスク", metrics.resistance_risk, "不安・安全懸念・不信の合成。低いほど望ましい。", true)}
+        </div>
+      `;
+    }
+
+    function renderKpi(label, value, note, inverse = false) {
+      const width = inverse ? Math.max(0, 100 - value) : value;
+      return `
+        <div class="kpi">
+          <span>${label}</span>
+          <strong>${value}</strong>
+          <span>${note}</span>
+          <div class="spark"><i style="width:${width}%"></i></div>
+        </div>
+      `;
+    }
+
+    function renderStanceChart() {
+      const condition = getCondition();
+      const metrics = condition.turns.map(turn => computeTurnMetrics(turn));
+      const series = {
+        "賛成": metrics.map(m => m.positive_count),
+        "中立": metrics.map(m => m.neutral_count),
+        "反対": metrics.map(m => m.negative_count)
+      };
+
+      const width = 660;
+      const height = 270;
+      const margin = { left: 44, right: 24, top: 20, bottom: 38 };
+      const innerW = width - margin.left - margin.right;
+      const innerH = height - margin.top - margin.bottom;
+      const x = i => margin.left + (innerW / 3) * i;
+      const y = v => margin.top + innerH - (v / 10) * innerH;
+
+      const colors = {
+        "賛成": "var(--green)",
+        "中立": "var(--yellow)",
+        "反対": "var(--red)"
+      };
+
+      function points(values) {
+        return values.map((v, i) => `${x(i)},${y(v)}`).join(" ");
+      }
+
+      function circles(values, label) {
+        return values.map((v, i) => `
+          <circle cx="${x(i)}" cy="${y(v)}" r="5" fill="${colors[label]}"></circle>
+          <text x="${x(i)}" y="${y(v) - 10}" fill="${colors[label]}" font-size="11" text-anchor="middle">${v}</text>
+        `).join("");
+      }
+
+      const gridLines = [0, 2, 4, 6, 8, 10].map(v => `
+        <line x1="${margin.left}" y1="${y(v)}" x2="${width - margin.right}" y2="${y(v)}" stroke="rgba(255,255,255,0.08)" />
+        <text x="${margin.left - 12}" y="${y(v) + 4}" fill="rgba(233,246,255,0.55)" font-size="11" text-anchor="end">${v}</text>
+      `).join("");
+
+      const xLabels = ["T1", "T2", "T3", "T4"].map((label, i) => `
+        <text x="${x(i)}" y="${height - 12}" fill="rgba(233,246,255,0.65)" font-size="12" text-anchor="middle">${label}</text>
+      `).join("");
+
+      const svg = `
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="賛否推移折れ線グラフ">
+          <rect x="0" y="0" width="${width}" height="${height}" rx="16" fill="rgba(0,0,0,0.18)"></rect>
+          ${gridLines}
+          <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height - margin.bottom}" stroke="rgba(255,255,255,0.18)" />
+          <line x1="${margin.left}" y1="${height - margin.bottom}" x2="${width - margin.right}" y2="${height - margin.bottom}" stroke="rgba(255,255,255,0.18)" />
+          ${xLabels}
+          <polyline points="${points(series["賛成"])}" fill="none" stroke="${colors["賛成"]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="${points(series["中立"])}" fill="none" stroke="${colors["中立"]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="${points(series["反対"])}" fill="none" stroke="${colors["反対"]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          ${circles(series["賛成"], "賛成")}
+          ${circles(series["中立"], "中立")}
+          ${circles(series["反対"], "反対")}
+        </svg>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--green)"></span>賛成</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--yellow)"></span>中立</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--red)"></span>反対</span>
+        </div>
+      `;
+
+      document.getElementById("stanceChart").innerHTML = svg;
+    }
+
+    function renderResistanceFactors() {
+      const condition = getCondition();
+      const turn = getTurn(condition, 4);
+      const states = turn.states;
+      const factors = [
+        { label: "不安", value: round1(average(states.map(s => s.anxiety))), note: "anxiety平均" },
+        { label: "安全懸念", value: round1(average(states.map(s => s.safety_concern))), note: "safety_concern平均" },
+        { label: "不信", value: round1(average(states.map(s => 100 - s.trust))), note: "100 - trust平均" },
+        { label: "低利用意欲", value: round1(average(states.map(s => 100 - s.use_intent))), note: "100 - use_intent平均" }
+      ];
+
+      document.getElementById("resistanceFactors").innerHTML = factors.map(f => `
+        <div class="factor">
+          <div class="factor-top">
+            <strong>${f.label}</strong>
+            <span>${f.value}</span>
+          </div>
+          <div class="bar risk"><i style="width:${f.value}%"></i></div>
+          <div class="note">${f.note}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderComparison() {
+      const container = document.getElementById("comparison");
+      container.innerHTML = DATA.conditions.map(condition => {
+        const metrics = computeTurnMetrics(getTurn(condition, 4));
+        const active = condition.id === state.selectedConditionId ? " active" : "";
+        return `
+          <div class="compare-card${active}">
+            <div class="mini-label">条件${condition.id}</div>
+            <div class="compare-title">${condition.name}</div>
+            ${renderMetricLine("短期利用", metrics.short_term_adoption)}
+            ${renderMetricLine("EX", metrics.ex_score)}
+            ${renderMetricLine("安全性", metrics.safety_score)}
+            ${renderMetricLine("反発リスク", metrics.resistance_risk, true)}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderMetricLine(label, value, inverse = false) {
+      const width = inverse ? Math.max(0, 100 - value) : value;
+      return `
+        <div class="metric-line">
+          <span>${label}</span>
+          <div class="bar ${inverse ? "risk" : ""}"><i style="width:${width}%"></i></div>
+          <b>${value}</b>
+        </div>
+      `;
+    }
+
+    function renderTurnControls() {
+      const container = document.getElementById("turnControls");
+      container.innerHTML = "";
+      [1, 2, 3, 4].forEach(turnNumber => {
+        const button = document.createElement("button");
+        button.className = "turn-btn" + (state.selectedTurn === turnNumber ? " active" : "");
+        button.type = "button";
+        button.textContent = "T" + turnNumber;
+        button.addEventListener("click", () => {
+          state.selectedTurn = turnNumber;
+          renderPersonaRows();
+          renderTurnControls();
+        });
+        container.appendChild(button);
+      });
+      document.getElementById("selectedTurnLabel").textContent = "Selected: T" + state.selectedTurn;
+    }
+
+    function renderPersonaRows() {
+      const condition = getCondition();
+      const turn = getTurn(condition, state.selectedTurn);
+      const tbody = document.getElementById("personaRows");
+
+      tbody.innerHTML = turn.states.map(s => {
+        const agent = getAgent(s.agentId);
+        return `
+          <tr>
+            <td>
+              <strong>${agent.name}</strong><br>
+              <span class="mini-label">${agent.id} / ${agent.archetype}</span><br>
+              <span style="color:var(--muted);font-size:12px;">初期態度：${agent.initial_stance} / 影響力：${agent.influence}</span>
+            </td>
+            <td>
+              ${agent.department}<br>
+              <span style="color:var(--muted);">${agent.role}</span><br>
+              <span style="color:var(--muted);font-size:12px;">AIリテラシー：${agent.ai_literacy}</span>
+            </td>
+            <td>
+              <span class="stance ${stanceClass(s.stance)}">${s.stance}</span><br>
+              <span style="color:var(--muted);font-size:12px;">支持 ${s.support_score} / 抵抗 ${s.resistance_score}</span>
+            </td>
+            <td>${renderStateBars(s)}</td>
+            <td>${s.public_utterance}</td>
+            <td>${s.private_thought}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderStateBars(s) {
+      return `
+        <div class="state-bars">
+          ${barRow("利用", s.use_intent)}
+          ${barRow("信頼", s.trust)}
+          ${barRow("不安", s.anxiety, true)}
+          ${barRow("安全懸念", s.safety_concern, true)}
+        </div>
+      `;
+    }
+
+    function barRow(label, value, risk = false) {
+      return `
+        <div class="bar-row">
+          <span>${label}</span>
+          <div class="bar ${risk ? "risk" : ""}"><i style="width:${value}%"></i></div>
+          <span>${value}</span>
+        </div>
+      `;
+    }
+
+    function renderTimeline() {
+      const condition = getCondition();
+      const container = document.getElementById("timeline");
+
+      container.innerHTML = condition.turns.map(turn => {
+        const metrics = computeTurnMetrics(turn);
+        const reps = pickRepresentativeLogs(turn.states);
+        return `
+          <div class="time-card">
+            <div class="time-head">
+              <span class="turn-pill">${turn.label}</span>
+              <span class="mini-label">賛成 ${metrics.positive_count} / 中立 ${metrics.neutral_count} / 反対 ${metrics.negative_count}</span>
+            </div>
+            ${reps.map(s => {
+              const agent = getAgent(s.agentId);
+              return `
+                <div class="log-item">
+                  <b>${agent.name}</b> <span style="color:var(--muted);">(${agent.department} / ${agent.role})</span>
+                  <div class="public">発言：${s.public_utterance}</div>
+                  <div class="private">内心：${s.private_thought}</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function pickRepresentativeLogs(states) {
+      const bySupport = [...states].sort((a, b) => b.support_score - a.support_score)[0];
+      const byResistance = [...states].sort((a, b) => b.resistance_score - a.resistance_score)[0];
+      const byMismatch = [...states].sort((a, b) => {
+        const aGap = Math.abs(a.support_score - a.resistance_score);
+        const bGap = Math.abs(b.support_score - b.resistance_score);
+        return aGap - bGap;
+      })[0];
+
+      const unique = [];
+      [bySupport, byResistance, byMismatch].forEach(item => {
+        if (!unique.some(u => u.agentId === item.agentId)) unique.push(item);
+      });
+
+      return unique;
+    }
+
+    function renderRecommendations() {
+      const condition = getCondition();
+      document.getElementById("recommendations").innerHTML = condition.recommendations.map(r => `<li>${r}</li>`).join("");
+    }
+
+    function getAllLogs() {
+      return DATA.conditions.flatMap(condition => {
+        return condition.turns.flatMap(turn => {
+          return turn.states.map(s => {
+            const agent = getAgent(s.agentId);
+            return {
+              conditionId: condition.id,
+              conditionName: condition.name,
+              turn: turn.label,
+              agentId: agent.id,
+              name: agent.name,
+              department: agent.department,
+              role: agent.role,
+              ai_literacy: agent.ai_literacy,
+              initial_stance: agent.initial_stance,
+              archetype: agent.archetype,
+              use_intent: s.use_intent,
+              trust: s.trust,
+              anxiety: s.anxiety,
+              safety_concern: s.safety_concern,
+              support_score: s.support_score,
+              resistance_score: s.resistance_score,
+              stance: s.stance,
+              public_utterance: s.public_utterance,
+              private_thought: s.private_thought
+            };
+          });
+        });
+      });
+    }
+
+    function escapeCsv(value) {
+      const text = String(value ?? "");
+      return '"' + text.replace(/"/g, '""') + '"';
+    }
+
+    function logsToCsv(logs) {
+      const headers = [
+        "conditionId",
+        "conditionName",
+        "turn",
+        "agentId",
+        "name",
+        "department",
+        "role",
+        "ai_literacy",
+        "initial_stance",
+        "archetype",
+        "use_intent",
+        "trust",
+        "anxiety",
+        "safety_concern",
+        "support_score",
+        "resistance_score",
+        "stance",
+        "public_utterance",
+        "private_thought"
+      ];
+
+      const rows = logs.map(row => headers.map(h => escapeCsv(row[h])).join(","));
+      return [headers.join(","), ...rows].join("\n");
+    }
+
+    function logsToMarkdown(logs) {
+      let md = "# EX社会シミュラクラ・デモ 全件ログ\n\n";
+      md += "- テーマ：社内AI導入時のEX反応シミュレーション\n";
+      md += "- 注意：完全架空データ。研究実験ではなく、社内説明用の簡易社会シミュラクラ・デモ。\n\n";
+
+      DATA.conditions.forEach(condition => {
+        md += "## 条件" + condition.id + "：" + condition.name + "\n\n";
+        condition.turns.forEach(turn => {
+          md += "### " + turn.label + "\n\n";
+          turn.states.forEach(s => {
+            const agent = getAgent(s.agentId);
+            md += "#### " + agent.name + "（" + agent.department + " / " + agent.role + "）\n\n";
+            md += "- 態度：" + s.stance + "\n";
+            md += "- 利用意欲：" + s.use_intent + "\n";
+            md += "- 信頼：" + s.trust + "\n";
+            md += "- 不安：" + s.anxiety + "\n";
+            md += "- 安全懸念：" + s.safety_concern + "\n";
+            md += "- 支持スコア：" + s.support_score + "\n";
+            md += "- 抵抗スコア：" + s.resistance_score + "\n";
+            md += "- 表向きの発言：" + s.public_utterance + "\n";
+            md += "- 内心：" + s.private_thought + "\n\n";
+          });
+        });
+      });
+
+      return md;
+    }
+
+    function updateFullLogText() {
+      const format = document.getElementById("logFormat").value;
+      const logs = getAllLogs();
+      const textarea = document.getElementById("fullLogText");
+
+      if (format === "json") {
+        textarea.value = JSON.stringify({
+          meta: DATA.meta,
+          agents: DATA.agents,
+          logs
+        }, null, 2);
+      }
+
+      if (format === "csv") {
+        textarea.value = logsToCsv(logs);
+      }
+
+      if (format === "markdown") {
+        textarea.value = logsToMarkdown(logs);
+      }
+    }
+
+    function setupLogButtons() {
+      const panel = document.getElementById("fullLogPanel");
+      const toggle = document.getElementById("toggleFullLogs");
+      const format = document.getElementById("logFormat");
+      const copy = document.getElementById("copyLog");
+      const textarea = document.getElementById("fullLogText");
+      const status = document.getElementById("copyStatus");
+
+      toggle.addEventListener("click", () => {
+        panel.classList.toggle("open");
+        updateFullLogText();
+      });
+
+      format.addEventListener("change", updateFullLogText);
+
+      copy.addEventListener("click", async () => {
+        updateFullLogText();
+        textarea.focus();
+        textarea.select();
+
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(textarea.value);
+          } else {
+            document.execCommand("copy");
+          }
+          status.textContent = "コピーしました。";
+        } catch (error) {
+          status.textContent = "コピーできませんでした。textareaを選択して手動コピーしてください。";
+        }
+
+        setTimeout(() => {
+          status.textContent = "";
+        }, 2200);
+      });
+    }
+
+    function renderAll() {
+      renderTabs();
+      renderConditionSummary();
+      renderStanceChart();
+      renderResistanceFactors();
+      renderComparison();
+      renderTurnControls();
+      renderPersonaRows();
+      renderTimeline();
+      renderRecommendations();
+      updateFullLogText();
+    }
+
+    setupLogButtons();
+    renderAll();
+  </script>
+</body>
+</html>
