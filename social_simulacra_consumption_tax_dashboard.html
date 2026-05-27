@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>社会シミュラクラ観測ログ No.001｜物価高対策としての消費税</title>
+  <style>
+    :root{
+      --bg:#f6f3ee;
+      --paper:#fffaf2;
+      --ink:#222222;
+      --muted:#6c665e;
+      --line:#ddd2c3;
+      --accent:#2f5f6f;
+      --accent2:#b56b3c;
+      --accent3:#6c8f6b;
+      --danger:#a04444;
+      --shadow: 0 18px 45px rgba(51, 38, 22, .10);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP",Meiryo,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(181,107,60,.18), transparent 35%),
+        radial-gradient(circle at top right, rgba(47,95,111,.16), transparent 30%),
+        linear-gradient(180deg,#f8f4ec 0%,#efe8db 100%);
+      line-height:1.78;
+    }
+    a{color:var(--accent); text-decoration-thickness: .08em; text-underline-offset: .18em;}
+    .wrap{max-width:1180px; margin:0 auto; padding:28px 18px 64px;}
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:32px;
+      background:linear-gradient(135deg,rgba(255,250,242,.96),rgba(255,246,232,.88));
+      box-shadow:var(--shadow);
+      padding:42px 34px;
+    }
+    .hero:after{
+      content:"";
+      position:absolute;
+      right:-120px; top:-140px;
+      width:360px; height:360px;
+      border-radius:50%;
+      background:repeating-linear-gradient(45deg, rgba(47,95,111,.12) 0 8px, transparent 8px 18px);
+      transform:rotate(12deg);
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:13px; font-weight:700; letter-spacing:.04em;
+      color:#fff; background:var(--accent);
+      border-radius:999px; padding:7px 13px;
+      position:relative; z-index:1;
+    }
+    h1{
+      font-size:clamp(29px,5vw,56px);
+      line-height:1.16;
+      margin:20px 0 14px;
+      letter-spacing:-.04em;
+      position:relative; z-index:1;
+    }
+    .lead{
+      max-width:850px; font-size:17px; color:#403b35; position:relative; z-index:1;
+    }
+    .notice{
+      margin-top:20px;
+      border-left:5px solid var(--accent2);
+      background:#fff5e6;
+      padding:14px 16px;
+      border-radius:14px;
+      font-weight:650;
+      position:relative; z-index:1;
+    }
+    .grid{display:grid; gap:18px;}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .grid-4{grid-template-columns:repeat(4,minmax(0,1fr));}
+    @media (max-width: 860px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.hero{padding:30px 22px}}
+    .card{
+      background:rgba(255,250,242,.94);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:0 10px 28px rgba(51,38,22,.06);
+      padding:22px;
+    }
+    section{margin-top:28px;}
+    h2{
+      font-size:28px;
+      line-height:1.35;
+      margin:0 0 14px;
+      letter-spacing:-.03em;
+    }
+    h3{font-size:20px; margin:16px 0 8px}
+    .muted{color:var(--muted)}
+    .small{font-size:13px}
+    .tabs{
+      display:flex; flex-wrap:wrap; gap:9px;
+      margin:22px 0 18px;
+      position:sticky; top:0; z-index:10;
+      background:rgba(246,243,238,.86);
+      backdrop-filter: blur(10px);
+      padding:12px 0;
+    }
+    button.tab, button.pill, select{
+      border:1px solid var(--line);
+      background:#fffaf2;
+      color:var(--ink);
+      border-radius:999px;
+      padding:10px 15px;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow:0 4px 12px rgba(51,38,22,.05);
+    }
+    button.tab.active, button.pill.active{background:var(--accent); color:#fff; border-color:var(--accent)}
+    .panel{display:none}
+    .panel.active{display:block}
+    table{
+      width:100%; border-collapse:separate; border-spacing:0; overflow:hidden;
+      border:1px solid var(--line); border-radius:18px; background:#fffdf8;
+      font-size:14px;
+    }
+    th,td{padding:12px 13px; border-bottom:1px solid var(--line); vertical-align:top}
+    th{background:#efe5d6; text-align:left; font-weight:800}
+    tr:last-child td{border-bottom:none}
+    .num{text-align:right; font-variant-numeric:tabular-nums}
+    .kpi{
+      display:flex; flex-direction:column; gap:8px; min-height:126px;
+      border-left:5px solid var(--accent);
+    }
+    .kpi .value{font-size:34px; font-weight:900; letter-spacing:-.05em}
+    .tag{
+      display:inline-flex; align-items:center;
+      padding:4px 9px; border-radius:999px;
+      background:#efe5d6; color:#51493f;
+      font-size:12px; font-weight:800;
+      margin:3px 4px 3px 0;
+      white-space:nowrap;
+    }
+    .tag.warn{background:#f7dfd2;color:#7d3827}
+    .tag.cool{background:#dfebe7;color:#235449}
+    .tag.blue{background:#dfeaf0;color:#244f5c}
+    .intervention{
+      border-top:6px solid var(--accent);
+      min-height:230px;
+    }
+    .intervention:nth-child(2){border-color:var(--accent2)}
+    .intervention:nth-child(3){border-color:var(--accent3)}
+    .intervention:nth-child(4){border-color:var(--danger)}
+    .barrow{
+      display:grid; grid-template-columns:110px 1fr 46px; gap:10px;
+      align-items:center; margin:10px 0;
+    }
+    .barbg{height:13px; background:#e7ded0; border-radius:999px; overflow:hidden}
+    .bar{height:100%; border-radius:999px; background:linear-gradient(90deg,var(--accent),var(--accent2));}
+    .svgbox{
+      width:100%; min-height:290px; border:1px dashed #cfc2b1;
+      border-radius:18px; background:#fffdf8; padding:12px; overflow:auto;
+    }
+    .persona-toolbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px}
+    .persona-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px}
+    @media (max-width: 860px){.persona-grid{grid-template-columns:1fr}}
+    details.persona{
+      background:#fffdf8; border:1px solid var(--line); border-radius:20px;
+      padding:0; overflow:hidden; box-shadow:0 7px 18px rgba(51,38,22,.05);
+    }
+    details.persona summary{
+      list-style:none; cursor:pointer; padding:18px 20px;
+      display:flex; justify-content:space-between; gap:14px; align-items:center;
+      font-weight:900;
+    }
+    details.persona summary::-webkit-details-marker{display:none}
+    .persona-body{padding:0 20px 18px; border-top:1px solid var(--line)}
+    .quote{
+      background:#f5ebdc; border-left:4px solid var(--accent2);
+      padding:12px 14px; border-radius:12px; margin:12px 0;
+    }
+    .split{
+      display:grid; grid-template-columns:1fr 1fr; gap:14px;
+    }
+    @media (max-width: 860px){.split{grid-template-columns:1fr}}
+    .noise-list{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
+    @media (max-width: 860px){.noise-list{grid-template-columns:1fr}}
+    .noise{
+      padding:16px 16px 16px 46px; border:1px solid var(--line); border-radius:18px;
+      background:#fffdf8; position:relative;
+    }
+    .noise:before{
+      content:"！"; position:absolute; left:15px; top:15px;
+      width:22px; height:22px; border-radius:50%;
+      display:grid; place-items:center; background:var(--accent2); color:white; font-weight:900;
+      font-size:13px;
+    }
+    .footer{
+      margin-top:28px; color:var(--muted); font-size:13px;
+      border-top:1px solid var(--line); padding-top:18px;
+    }
+    .source-list li{margin:8px 0}
+    .article-summary{
+      font-size:17px; background:linear-gradient(135deg,#fffdf8,#f7ead7);
+      border:1px solid var(--line); border-radius:22px; padding:22px;
+    }
+    .screenmock{
+      display:grid; grid-template-columns:220px 1fr; gap:12px;
+      border:1px solid var(--line); border-radius:24px; padding:14px;
+      background:#fffdf8;
+    }
+    .screenmock .side{background:#efe5d6;border-radius:18px;padding:14px}
+    .screenmock .main{display:grid; gap:12px}
+    .screenmock .block{background:#f8f1e6;border-radius:18px;padding:16px;border:1px solid #e2d5c4}
+    @media (max-width: 700px){.screenmock{grid-template-columns:1fr}}
+    .print-note{display:none}
+    @media print{
+      body{background:white}
+      .tabs,.persona-toolbar{display:none}
+      .panel{display:block!important}
+      .card,.hero{box-shadow:none}
+      .print-note{display:block}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="badge">社会シミュラクラ観測所｜観測ログ No.001</div>
+      <h1>物価高対策としての<br>消費税を観測する</h1>
+      <p class="lead">
+        食料品消費税0％、食料品1％、所得に応じた給付金、そして現状維持。
+        どの案が「正しいか」を断定するのではなく、社会の中で誰にどう読まれ、
+        どんな期待・不安・沈黙・反発が生まれるのかを、架空ペルソナで観測する。
+      </p>
+      <div class="notice">
+        これは未来予測ではありません。架空データと仮説に基づく、思考実験・構想支援・対話促進のためのデモです。
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="dashboard tabs">
+      <button class="tab active" data-tab="overview">全体像</button>
+      <button class="tab" data-tab="interventions">処置比較</button>
+      <button class="tab" data-tab="personas">ペルソナログ</button>
+      <button class="tab" data-tab="distribution">反応分布</button>
+      <button class="tab" data-tab="noise">ズレ・ノイズ</button>
+      <button class="tab" data-tab="implications">含意</button>
+      <button class="tab" data-tab="htmlplan">画面構成</button>
+    </nav>
+
+    <main>
+      <section id="overview" class="panel active">
+        <div class="grid grid-3">
+          <div class="card kpi">
+            <span class="muted small">観測対象</span>
+            <span class="value">日本社会</span>
+            <span>所得・家族構成・職種・地域・制度信頼の違いを見る</span>
+          </div>
+          <div class="card kpi">
+            <span class="muted small">ペルソナ数</span>
+            <span class="value">18人</span>
+            <span>賛成派、反対派、沈黙層、あとから反応する層を混在</span>
+          </div>
+          <div class="card kpi">
+            <span class="muted small">時間軸</span>
+            <span class="value">5時点</span>
+            <span>即時、1か月後、半年後、1年後、3年後</span>
+          </div>
+        </div>
+
+        <section class="card">
+          <h2>この観測で明らかにしたいこと</h2>
+          <div class="grid grid-2">
+            <div>
+              <p>
+                物価高対策は、しばしば「減税か、給付か」という二択で語られる。
+                しかし実際の社会反応は、制度の設計だけでなく、生活の切迫度、将来不安、申請負担、
+                支援対象から外れる感覚、現場で制度を処理する人の疲労によって分かれる。
+              </p>
+              <p>
+                このHTMLでは、平均的な賛否ではなく、反応の地形を眺める。
+                とくに、表向きの発言と内心のズレ、支援されるはずの人が制度を信じられない場面、
+                事業者・自治体・専門職に遅れて出る摩擦を残す。
+              </p>
+            </div>
+            <div class="quote">
+              <strong>観測の問い</strong><br>
+              誰に届くのか。誰に届かないのか。誰が期待し、誰が警戒し、誰が黙るのか。
+              そして、政策そのものより先に、どの誤解を解くべきなのか。
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>現実前提と注意点</h2>
+          <p>
+            日本の消費税は標準税率10％で、酒類・外食などを除く飲食料品等には軽減税率8％が適用されている。
+            消費税収は社会保障財源として説明されており、物価面では2026年4月の全国CPIで総合指数が前年同月比1.4％上昇している。
+          </p>
+          <p class="muted small">
+            本HTML内の政策反応・指標・スコアはすべて架空です。上記の制度・統計前提のみ、公式情報を参照しています。
+          </p>
+        </section>
+
+        <section class="card">
+          <h2>半年後時点の架空平均スコア</h2>
+          <div id="scoreBars"></div>
+          <div class="svgbox" id="radarBox" aria-label="架空スコアチャート"></div>
+        </section>
+
+        <section class="article-summary">
+          <h2>まとめ：今日の社会地図</h2>
+          <p>
+            今回見えた社会の地形は、「減税を望む人」と「財政を心配する人」の単純な対立ではなかった。
+            食費に追い詰められる人は、食料品0％に強く反応する。一方で、高齢者や政策関心層は、
+            生活が助かることを理解しながらも、社会保障や将来負担への不安を消せない。
+            給付金は困窮層に届きうるが、申請できない人、対象から外れる中間層、運用する自治体を同時に生む。
+            もっとも重要なズレは、支援策の評価が「金額」だけでなく、「自分は見捨てられていない」と感じられるかに左右される点である。
+            次に測るべき問いは、どの制度が正しいかではなく、誰が制度にたどり着けず、誰が制度を信じられないのかである。
+          </p>
+        </section>
+      </section>
+
+      <section id="interventions" class="panel">
+        <div class="grid grid-4">
+          <div class="card intervention">
+            <h2>現状維持</h2>
+            <p><strong>狙い：</strong>制度変更による混乱を避ける。</p>
+            <p><strong>届きやすい層：</strong>財政不安が強い層、事業者の一部。</p>
+            <p><strong>届きにくい層：</strong>生活困窮層、子育て層。</p>
+            <span class="tag warn">副作用：放置感</span>
+          </div>
+          <div class="card intervention">
+            <h2>食料品0％</h2>
+            <p><strong>狙い：</strong>食費負担を目に見える形で軽減する。</p>
+            <p><strong>届きやすい層：</strong>低所得層、子育て層、高齢者。</p>
+            <p><strong>届きにくい層：</strong>外食中心層、価格転嫁が不透明な層。</p>
+            <span class="tag cool">体感効果が強い</span><span class="tag warn">財源不安</span>
+          </div>
+          <div class="card intervention">
+            <h2>食料品1％</h2>
+            <p><strong>狙い：</strong>減税効果と財源配慮の中間案。</p>
+            <p><strong>届きやすい層：</strong>慎重派、財政不安がある減税支持層。</p>
+            <p><strong>届きにくい層：</strong>わかりやすさを求める層。</p>
+            <span class="tag">妥協案</span><span class="tag warn">説明コスト</span>
+          </div>
+          <div class="card intervention">
+            <h2>所得に応じた給付金</h2>
+            <p><strong>狙い：</strong>困っている層に直接届ける。</p>
+            <p><strong>届きやすい層：</strong>低所得世帯、子育て困窮層。</p>
+            <p><strong>届きにくい層：</strong>所得境界の中間層、申請が苦手な人。</p>
+            <span class="tag blue">直接支援</span><span class="tag warn">対象漏れ</span>
+          </div>
+        </div>
+
+        <section class="card">
+          <h2>比較表</h2>
+          <table>
+            <thead><tr><th>処置</th><th>期待度</th><th>不安度</th><th>制度信頼度</th><th>生活改善感</th><th>公平感</th><th>反発度</th><th>コメント</th></tr></thead>
+            <tbody id="scoreTable"></tbody>
+          </table>
+        </section>
+
+        <section class="card">
+          <h2>時間変化のイメージ</h2>
+          <p class="muted">架空スコア。食料品0％は即時の期待が高いが、半年後以降は「食費以外も高い」という不満が戻る。給付金は対象者には強いが、境界層の反発も同時に増える。</p>
+          <div class="svgbox" id="timeChart"></div>
+        </section>
+      </section>
+
+      <section id="personas" class="panel">
+        <div class="card">
+          <h2>ペルソナ別ログ</h2>
+          <p class="muted">
+            発言と内心は一致しない。人は本音を言わないことがある。
+            沈黙、誤解、諦め、建前も観測対象にする。
+          </p>
+          <div class="persona-toolbar">
+            <button class="pill active" data-filter="all">全員</button>
+            <button class="pill" data-filter="low">低所得・切迫</button>
+            <button class="pill" data-filter="middle">中間層</button>
+            <button class="pill" data-filter="operator">制度運用・現場</button>
+            <button class="pill" data-filter="fiscal">財政不安</button>
+            <button class="pill" data-filter="silent">沈黙・あとから反応</button>
+          </div>
+          <div class="persona-grid" id="personaGrid"></div>
+        </div>
+      </section>
+
+      <section id="distribution" class="panel">
+        <div class="card">
+          <h2>反応の分布</h2>
+          <table>
+            <thead><tr><th>反応タイプ</th><th class="num">人数</th><th>代表ペルソナ</th><th>特徴</th></tr></thead>
+            <tbody>
+              <tr><td>すぐ賛成する</td><td class="num">4</td><td>P01, P02, P10, P16</td><td>食費の痛みが強く、食料品0％に即反応。</td></tr>
+              <tr><td>条件付きで賛成する</td><td class="num">5</td><td>P03, P07, P09, P17, P18</td><td>支援は必要だが財源・運用・対象漏れを気にする。</td></tr>
+              <tr><td>不安が強い</td><td class="num">3</td><td>P03, P06, P09</td><td>社会保障、自治体負担、将来負担が気になる。</td></tr>
+              <tr><td>表向き賛成・内心反対</td><td class="num">2</td><td>P04, P15</td><td>消費者支援には反対しにくいが、現場負担を恐れる。</td></tr>
+              <tr><td>無関心・沈黙</td><td class="num">1</td><td>P08</td><td>政策用語には反応しないが、体感には反応する。</td></tr>
+              <tr><td>あとから効いてくる</td><td class="num">2</td><td>P11, P18</td><td>申請、対象判定、地域支援の段階で問題が見える。</td></tr>
+              <tr><td>反発する</td><td class="num">1</td><td>P05</td><td>食料品減税が外食・小規模事業者への逆風に見える。</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h2>期待と不安の2軸マップ</h2>
+          <div class="svgbox" id="scatterChart"></div>
+        </div>
+      </section>
+
+      <section id="noise" class="panel">
+        <div class="card">
+          <h2>観測されたズレ・ノイズ</h2>
+          <div class="noise-list">
+            <div class="noise">得をするはずの高齢者が、社会保障不安で減税に警戒する。</div>
+            <div class="noise">困っている人ほど、給付金の申請や対象判定に疲れている。</div>
+            <div class="noise">食料品減税はわかりやすいが、スーパー・会計・生産者・飲食店には別の摩擦が出る。</div>
+            <div class="noise">中間層は「自分は支援されないが負担はする」という感情を持ちやすい。</div>
+            <div class="noise">食料品0％は支持されやすいが、半年後には「食費以外も高い」という不満が戻る。</div>
+            <div class="noise">食料品1％は妥協案だが、説明が下手だと“中途半端”に見える。</div>
+            <div class="noise">給付金は必要な人に届く可能性がある一方、届かない人・申請できない人を生む。</div>
+            <div class="noise">物価高対策は、賃金、社会保障、地域孤立、制度不信の問題を同時にあぶり出す。</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="implications" class="panel">
+        <div class="grid grid-2">
+          <div class="card">
+            <h2>すぐ使える示唆</h2>
+            <ul>
+              <li>先に届けるべきは、食費負担が生活全体を圧迫している層。</li>
+              <li>解くべき誤解は「減税なら全員が単純に得をする」「給付なら困窮者に自動的に届く」。</li>
+              <li>置き去りにされやすいのは、境界線上の中間層、不安定所得層、申請が苦手な高齢者、制度変更を処理する現場。</li>
+              <li>政策評価は金額だけでなく、「自分は見捨てられていない」という感覚に左右される。</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>事業アイデア化するなら</h2>
+            <table>
+              <thead><tr><th>事業仮説</th><th>内容</th></tr></thead>
+              <tbody>
+                <tr><td>家計影響シミュレーター</td><td>減税・給付・物価変化が世帯別にどう効くかを可視化。</td></tr>
+                <tr><td>支援制度ナビ</td><td>所得・家族構成・地域に応じて使える支援を案内。</td></tr>
+                <tr><td>自治体向け申請支援ダッシュボード</td><td>対象漏れ・申請停滞・問い合わせ集中を可視化。</td></tr>
+                <tr><td>小売・飲食向け制度変更対応ツール</td><td>税率変更時の価格表示・レジ・説明文を支援。</td></tr>
+                <tr><td>政策コミュニケーション診断</td><td>施策がどの層に誤解されるかを事前に観測。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <section class="card">
+          <h2>公開してよい仮説</h2>
+          <div class="quote">
+            物価高対策は、単なる減税か給付かの選択ではない。社会には「今すぐ助かりたい人」「将来の社会保障を心配する人」「制度変更を処理する現場」「支援対象から外れる中間層」「申請できない困窮者」が同時に存在する。必要なのは、平均的な賛否ではなく、反応の地形図である。
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>次に測るべきこと</h2>
+          <table>
+            <thead><tr><th>次回観測テーマ</th><th>なぜ測るべきか</th><th>必要な追加情報</th></tr></thead>
+            <tbody>
+              <tr><td>給付金は誰に届かないのか</td><td>対象設計よりも申請・認知・心理的障壁が問題になるため。</td><td>所得階層、申請経験、自治体支援。</td></tr>
+              <tr><td>食料品減税は価格に反映されると信じられるか</td><td>消費者の信頼が政策評価を左右するため。</td><td>小売価格、表示方法、消費者心理。</td></tr>
+              <tr><td>中間層はなぜ支援策に反発するのか</td><td>対象外感が制度不信につながるため。</td><td>世帯年収、扶養、教育費、住宅費。</td></tr>
+              <tr><td>物価高対策と社会保障不安の関係</td><td>減税支持と将来不安が同時に存在するため。</td><td>年齢、年金不安、医療・介護負担。</td></tr>
+              <tr><td>小売・飲食・会計現場の制度疲労</td><td>政策の運用負担が見えにくいため。</td><td>レジ対応、会計処理、問い合わせ件数。</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+
+      <section id="htmlplan" class="panel">
+        <div class="card">
+          <h2>HTMLダッシュボード画面構成</h2>
+          <div class="screenmock">
+            <div class="side">
+              <strong>サイド：観測されたズレ</strong>
+              <p class="small">放置感、財源不安、申請疲れ、境界層の反発、現場負担。</p>
+            </div>
+            <div class="main">
+              <div class="block"><strong>上部：</strong>テーマと注意書き。架空データであることを固定表示。</div>
+              <div class="block"><strong>タブ：</strong>処置別比較、ペルソナログ、反応分布、含意。</div>
+              <div class="block"><strong>中央：</strong>主要指標チャート、時間変化チャート、期待と不安の2軸マップ。</div>
+              <div class="block"><strong>下部：</strong>次に測るべきこと、公開可能な仮説、note記事タイトル案。</div>
+            </div>
+          </div>
+        </div>
+
+        <section class="card">
+          <h2>note / Qiita向けタイトル案</h2>
+          <ol>
+            <li>物価高対策を「平均値」で見てはいけない</li>
+            <li>食料品減税は誰に届き、誰に届かないのか</li>
+            <li>消費税を下げる前に、社会の反応地図を描いてみる</li>
+            <li>給付金が届く人、届かない人、怒る人</li>
+            <li>物価高対策の社会シミュラクラ観測ログ</li>
+            <li>「減税か給付か」では見えない生活者の分断</li>
+            <li>食料品0％、1％、給付金——18人の架空ペルソナで読む</li>
+            <li>政策は正しさより先に、どう受け取られるかで揺れる</li>
+          </ol>
+        </section>
+
+        <section class="card">
+          <h2>図解案</h2>
+          <table>
+            <thead><tr><th>図の名前</th><th>何を表すか</th><th>図の形式</th></tr></thead>
+            <tbody>
+              <tr><td>ペルソナ反応マップ</td><td>各ペルソナの期待度と不安度。</td><td>2軸散布図</td></tr>
+              <tr><td>介入別ヒートマップ</td><td>どの施策がどの層に効くか。</td><td>ペルソナ×処置のヒートマップ</td></tr>
+              <tr><td>時間変化チャート</td><td>即時から3年後までの期待・不安の推移。</td><td>折れ線グラフ</td></tr>
+              <tr><td>社会地形図</td><td>支援対象、境界層、現場負担層の位置関係。</td><td>地図風ダイアグラム</td></tr>
+              <tr><td>ズレの観測ボード</td><td>表向きの発言と内心の違い。</td><td>カード型比較図</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <h2>参考情報</h2>
+      <ul class="source-list">
+        <li>国税庁「No.6102 消費税の軽減税率制度」：飲食料品等の軽減税率の対象範囲。</li>
+        <li>財務省「消費税の使途に関する資料」：消費税収と社会保障財源の説明。</li>
+        <li>総務省統計局「2020年基準 消費者物価指数 全国 2026年4月分」：CPIの概況。</li>
+      </ul>
+      <p>
+        <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6102.htm">国税庁</a> /
+        <a href="https://www.mof.go.jp/tax_policy/summary/consumption/d05.htm">財務省</a> /
+        <a href="https://www.stat.go.jp/data/cpi/sokuhou/tsuki/index-z.html">総務省統計局</a>
+      </p>
+      <p class="print-note">印刷時は全タブ内容を展開して表示します。</p>
+    </footer>
+  </div>
+
+  <script>
+    const scores = [
+      {name:"現状維持", exp:21, anxiety:76, trust:33, life:18, fair:29, backlash:64, comment:"困窮層ほど「放置」と受け取る"},
+      {name:"食料品0％", exp:69, anxiety:48, trust:46, life:66, fair:55, backlash:39, comment:"体感効果は強いが財源不安も残る"},
+      {name:"食料品1％", exp:55, anxiety:50, trust:44, life:52, fair:50, backlash:43, comment:"妥協案だが説明不足だと弱い"},
+      {name:"所得に応じた給付金", exp:51, anxiety:57, trust:41, life:49, fair:44, backlash:50, comment:"届く人には強いが境界層の不満が大きい"}
+    ];
+
+    const personas = [
+      {id:"P01",name:"佐藤美咲",attr:"32歳・非正規・単身・都市部",group:["low"],position:"低所得勤労層",values:"今日の支出が最優先",emotion:"疲労",interest:"高い",say:"食料品が安くなるなら、正直なんでも助かります。",inner:"給付金はありがたいけど、どうせ私は対象外かもしれない。",initial:"食料品0％に強く期待。",month:"スーパーでの支払いが少し軽くなり、心理的余裕が出る。",half:"家賃や光熱費は変わらず、食費だけでは足りないと感じ始める。",best:"食料品0％",bad:"現状維持",memo:"食料品減税は「毎日の痛み」に直接触れるが、生活全体の解決にはならない。",exp:82,anxiety:71},
+      {id:"P02",name:"田中健太",attr:"41歳・会社員・子2人",group:["middle"],position:"子育て中間層",values:"家計防衛と教育費",emotion:"焦り",interest:"高い",say:"子どもがいる家庭には食料品減税は大きいです。",inner:"でも将来、教育費や社会保険料が上がるなら意味がない。",initial:"食料品0％に賛成。",month:"家計アプリ上では効果を感じる。",half:"学校関連費、習い事、保険料の負担が気になり始める。",best:"食料品0％",bad:"所得制限付き給付金",memo:"中間層は「支援対象から外れる怒り」を持ちやすい。",exp:76,anxiety:60},
+      {id:"P03",name:"山口春江",attr:"74歳・年金生活・地方",group:["low","fiscal"],position:"高齢単身",values:"医療と食費を守りたい",emotion:"不安",interest:"高い",say:"食べ物が安くなるならありがたいです。",inner:"でも年金や医療が削られたら怖い。",initial:"食料品1％に安心感。",month:"レジでの支払い低下に気づく。",half:"テレビで財源問題を見ると不安が戻る。",best:"食料品1％",bad:"現状維持",memo:"高齢層は減税メリットと社会保障不安を同時に抱える。",exp:58,anxiety:78},
+      {id:"P04",name:"鈴木真理",attr:"48歳・スーパー店長",group:["operator"],position:"小売事業者",values:"現場負担を減らしたい",emotion:"警戒",interest:"高い",say:"お客様には喜ばれると思います。",inner:"レジ改修、表示変更、問い合わせ対応は全部現場に来る。",initial:"食料品0％に警戒。",month:"現場負担が増え、従業員の疲労が出る。",half:"消費者から「本当に安くなっているのか」と疑われる。",best:"所得に応じた給付金",bad:"食料品1％",memo:"消費者に見える政策ほど、現場には説明・表示・会計負担が降ってくる。",exp:48,anxiety:69},
+      {id:"P05",name:"木村亮",attr:"29歳・飲食店経営",group:["operator"],position:"小規模事業者",values:"現金繰り重視",emotion:"いら立ち",interest:"高い",say:"食料品だけ下げても外食は助からないですよね。",inner:"うちはむしろ不利になるかもしれない。",initial:"食料品減税に反発。",month:"内食需要が増え、外食への視線が冷える。",half:"仕入れ価格高騰と客足減で不満が強まる。",best:"所得に応じた給付金",bad:"食料品0％",memo:"同じ「食」に関わる事業者でも、スーパーと飲食店では利害が分かれる。",exp:30,anxiety:67},
+      {id:"P06",name:"伊藤沙織",attr:"36歳・公務員",group:["operator"],position:"制度運用側",values:"公平性と実務可能性",emotion:"慎重",interest:"高い",say:"制度はわかりやすさと実務可能性が大切です。",inner:"給付金も減税も、結局現場が燃える。",initial:"どの案にも慎重。",month:"給付金案では問い合わせ対応の負荷を予想。",half:"対象外クレーム、申請漏れ、自治体差に不安。",best:"食料品1％",bad:"所得に応じた給付金",memo:"政策の善し悪しとは別に、運用可能性が信頼を左右する。",exp:45,anxiety:74},
+      {id:"P07",name:"高橋修",attr:"58歳・中小企業経営",group:["fiscal"],position:"雇用維持側",values:"財政と景気の両立",emotion:"疑念",interest:"中",say:"消費が戻るなら減税もありでしょう。",inner:"財源なき減税は結局どこかでツケが来る。",initial:"食料品1％に条件付き賛成。",month:"従業員の生活不安が軽くなるなら意味があると感じる。",half:"社会保険料や法人負担への波及を警戒。",best:"食料品1％",bad:"現状維持",memo:"経営層は消費刺激と財政不安を天秤にかける。",exp:58,anxiety:64},
+      {id:"P08",name:"中村愛",attr:"22歳・大学生・奨学金あり",group:["low","silent"],position:"若年低所得",values:"生活費と将来不安",emotion:"諦め",interest:"中",say:"政治の話はよくわからないです。",inner:"コンビニで買うものが高くて、毎日ちょっと削っている。",initial:"低関心だが食料品0％には反応。",month:"SNSで「安くなった」と見ると関心を持つ。",half:"自分が制度を理解していないことに少し不安。",best:"食料品0％",bad:"所得に応じた給付金",memo:"若年層には「説明」より「体感」が先に届く。",exp:62,anxiety:59},
+      {id:"P09",name:"小林隆",attr:"67歳・持ち家・資産あり",group:["fiscal"],position:"高齢中上位層",values:"社会保障維持",emotion:"警戒",interest:"中",say:"将来世代に借金を残してはいけません。",inner:"自分の年金や医療も守ってほしい。",initial:"現状維持寄り。",month:"周囲の高齢者の困窮を見て揺れる。",half:"食料品1％なら妥協できると考える。",best:"食料品1％",bad:"食料品0％",memo:"財政規律派も、身近な困窮を見ると立場が揺れる。",exp:42,anxiety:76},
+      {id:"P10",name:"森田葵",attr:"39歳・ひとり親・パート",group:["low"],position:"低所得子育て層",values:"すぐ届く支援",emotion:"切迫",interest:"非常に高い",say:"給付でも減税でも、早くしてほしいです。",inner:"来月の食費が本当に足りない。",initial:"給付金に強く期待。",month:"支給が遅れると不信が増す。",half:"一度の給付では足りず、継続支援を求める。",best:"所得に応じた給付金",bad:"現状維持",memo:"最も困っている層には、制度の美しさより速度が重要。",exp:88,anxiety:82},
+      {id:"P11",name:"阿部拓也",attr:"45歳・フリーランス",group:["silent"],position:"不安定所得",values:"手続き嫌い",emotion:"疲労",interest:"中",say:"また申請ですか、という感じです。",inner:"収入が読めないのに、制度上は困っていない扱いにされそう。",initial:"給付金に不信。",month:"食料品減税の方が楽だと感じる。",half:"税務の記憶と結びつき、制度疲れが出る。",best:"食料品0％",bad:"所得に応じた給付金",memo:"不安定所得層は「所得判定」と相性が悪い。",exp:54,anxiety:70},
+      {id:"P12",name:"渡辺千尋",attr:"51歳・会計事務所勤務",group:["operator"],position:"実務専門職",values:"制度の整合性",emotion:"冷静",interest:"高い",say:"税率変更は実務負担を甘く見ない方がいいです。",inner:"1％は計算としてはできるが、現場説明が面倒すぎる。",initial:"食料品1％に懐疑。",month:"顧客からの相談が増えると予想。",half:"制度設計の粗さがあると信頼が下がる。",best:"所得に応じた給付金",bad:"食料品1％",memo:"専門職は「理念」よりも「制度の摩擦」を見る。",exp:44,anxiety:65},
+      {id:"P13",name:"加藤隼人",attr:"34歳・高所得IT職",group:["fiscal"],position:"高所得都市部",values:"効率と合理性",emotion:"距離感",interest:"低い",say:"低所得層に絞った給付の方が合理的では。",inner:"自分には関係ないが、増税だけは困る。",initial:"給付金に賛成。",month:"SNSで中間層批判を見ると距離を置く。",half:"制度全体への関心は薄れる。",best:"所得に応じた給付金",bad:"食料品0％",memo:"高所得層は合理性を語るが、自分の将来負担には敏感。",exp:40,anxiety:43},
+      {id:"P14",name:"吉田奈緒",attr:"27歳・介護職",group:["low"],position:"低〜中所得勤労層",values:"現場労働の報われなさ",emotion:"不満",interest:"高い",say:"食料品が安くなるなら助かります。",inner:"でも介護職の給料が上がらない限り、ずっと苦しい。",initial:"食料品0％に期待。",month:"小さな安心はあるが、職場不満は残る。",half:"減税より賃上げや処遇改善を求め始める。",best:"食料品0％",bad:"現状維持",memo:"物価高対策は、労働への不満を一時的に覆うだけの場合がある。",exp:73,anxiety:68},
+      {id:"P15",name:"林浩二",attr:"62歳・農業",group:["operator"],position:"生産者",values:"食料価格と地域経済",emotion:"複雑",interest:"中",say:"消費者が助かるのはいいことです。",inner:"生産者価格を下げろと言われるのは困る。",initial:"食料品減税に複雑。",month:"消費者の価格期待が下がることを警戒。",half:"農家のコスト増が理解されない不満が出る。",best:"所得に応じた給付金",bad:"食料品0％",memo:"消費者支援が、生産者への価格圧力として読まれる可能性がある。",exp:47,anxiety:66},
+      {id:"P16",name:"井上恵",attr:"44歳・専業主婦・夫は会社員",group:["middle"],position:"片働き家庭",values:"家計管理",emotion:"心配",interest:"高い",say:"家計簿をつけていると食費の重さは本当に感じます。",inner:"でも夫の所得で給付対象外になるのは納得できない。",initial:"食料品0％に賛成。",month:"スーパーでの実感が強い。",half:"教育費・住宅ローンの負担は残る。",best:"食料品0％",bad:"所得に応じた給付金",memo:"家計管理者には、普遍的な食料品減税が「公平」に見えやすい。",exp:78,anxiety:61},
+      {id:"P17",name:"松本颯",attr:"31歳・政治関心高い会社員",group:["fiscal"],position:"政策ウォッチ層",values:"財政規律",emotion:"懐疑",interest:"高い",say:"減税の前に財源を示すべきです。",inner:"ただ、現状維持では政治的にもたない気がする。",initial:"食料品1％に関心。",month:"各案の財源説明の有無で評価が変わる。",half:"説明なき0％には強く反発。",best:"食料品1％",bad:"食料品0％",memo:"政策関心層は、支援そのものより説明責任を見る。",exp:45,anxiety:72},
+      {id:"P18",name:"西村陽子",attr:"70歳・地域ボランティア",group:["silent","operator"],position:"地域支援者",values:"孤立世帯への支援",emotion:"心配",interest:"高い",say:"制度を知らない人にどう届けるかが大事です。",inner:"本当に困っている人ほど申請できない。",initial:"給付金に期待と不安。",month:"地域で申請支援が必要になると感じる。",half:"対象漏れや孤立世帯の発見が課題になる。",best:"所得に応じた給付金",bad:"現状維持",memo:"給付金は「制度」だけでなく「届ける人」が必要になる。",exp:64,anxiety:75}
+    ];
+
+    function $(sel){return document.querySelector(sel)}
+    function $all(sel){return Array.from(document.querySelectorAll(sel))}
+    $all(".tab").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        $all(".tab").forEach(b=>b.classList.remove("active"));
+        $all(".panel").forEach(p=>p.classList.remove("active"));
+        btn.classList.add("active");
+        $("#" + btn.dataset.tab).classList.add("active");
+        window.scrollTo({top:0, behavior:"smooth"});
+      });
+    });
+
+    function renderScoreTable(){
+      $("#scoreTable").innerHTML = scores.map(s=>`
+        <tr>
+          <td><strong>${s.name}</strong></td>
+          <td class="num">${s.exp}</td><td class="num">${s.anxiety}</td><td class="num">${s.trust}</td>
+          <td class="num">${s.life}</td><td class="num">${s.fair}</td><td class="num">${s.backlash}</td>
+          <td>${s.comment}</td>
+        </tr>`).join("");
+    }
+
+    function renderBars(){
+      const metrics = [
+        ["期待度","exp"],["不安度","anxiety"],["制度信頼度","trust"],["生活改善感","life"],["公平感","fair"],["反発度","backlash"]
+      ];
+      $("#scoreBars").innerHTML = scores.map(s=>`
+        <div class="card" style="margin:14px 0;background:#fffdf8">
+          <h3>${s.name}</h3>
+          ${metrics.map(([label,key])=>`
+            <div class="barrow"><span>${label}</span><div class="barbg"><div class="bar" style="width:${s[key]}%"></div></div><strong>${s[key]}</strong></div>
+          `).join("")}
+          <p class="muted small">${s.comment}</p>
+        </div>`).join("");
+    }
+
+    function lineSvg(){
+      const series = [
+        {name:"現状維持", vals:[25,22,21,20,18]},
+        {name:"食料品0％", vals:[76,72,69,61,56]},
+        {name:"食料品1％", vals:[58,56,55,53,50]},
+        {name:"給付金", vals:[63,55,51,47,44]}
+      ];
+      const labels = ["即時","1か月後","半年後","1年後","3年後"];
+      const w=850,h=300,p=42;
+      const x=i=>p+i*(w-p*2)/(labels.length-1);
+      const y=v=>h-p-(v/100)*(h-p*2);
+      const colors=["#777","#b56b3c","#6c8f6b","#2f5f6f"];
+      const grid=[0,25,50,75,100].map(v=>`<line x1="${p}" x2="${w-p}" y1="${y(v)}" y2="${y(v)}" stroke="#e2d5c4"/><text x="8" y="${y(v)+5}" font-size="12" fill="#6c665e">${v}</text>`).join("");
+      const lines=series.map((s,idx)=>{
+        const pts=s.vals.map((v,i)=>`${x(i)},${y(v)}`).join(" ");
+        const dots=s.vals.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="4" fill="${colors[idx]}"><title>${s.name}: ${v}</title></circle>`).join("");
+        return `<polyline points="${pts}" fill="none" stroke="${colors[idx]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${dots}`;
+      }).join("");
+      const xs=labels.map((l,i)=>`<text x="${x(i)}" y="${h-10}" font-size="13" text-anchor="middle" fill="#4a443d">${l}</text>`).join("");
+      const legend=series.map((s,i)=>`<g transform="translate(${p+i*180},14)"><rect width="12" height="12" rx="3" fill="${colors[i]}"/><text x="18" y="11" font-size="13" fill="#4a443d">${s.name}</text></g>`).join("");
+      return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="300" role="img" aria-label="期待度の時間変化">${legend}${grid}${lines}${xs}</svg>`;
+    }
+
+    function radarLikeSvg(){
+      const w=850,h=310,p=38;
+      const metricLabels=["期待","不安","信頼","生活","公平","反発"];
+      const keys=["exp","anxiety","trust","life","fair","backlash"];
+      const barW=(w-p*2)/scores.length/1.4;
+      let out=`<svg viewBox="0 0 ${w} ${h}" width="100%" height="310" role="img" aria-label="処置別スコア比較">`;
+      out += `<text x="${p}" y="24" font-size="16" font-weight="800" fill="#222">処置別・主要指標の架空スコア</text>`;
+      scores.forEach((s,i)=>{
+        const gx=p+i*((w-p*2)/scores.length)+18;
+        out += `<text x="${gx}" y="55" font-size="13" font-weight="800" fill="#222">${s.name}</text>`;
+        keys.forEach((key,j)=>{
+          const v=s[key]; const y=78+j*34;
+          out += `<text x="${gx}" y="${y+12}" font-size="12" fill="#6c665e">${metricLabels[j]}</text>`;
+          out += `<rect x="${gx+42}" y="${y}" width="${barW}" height="14" rx="7" fill="#e7ded0"/>`;
+          out += `<rect x="${gx+42}" y="${y}" width="${barW*v/100}" height="14" rx="7" fill="${key==='anxiety'||key==='backlash' ? '#b56b3c' : '#2f5f6f'}"/>`;
+          out += `<text x="${gx+48+barW}" y="${y+12}" font-size="12" text-anchor="end" fill="#222">${v}</text>`;
+        });
+      });
+      out += `</svg>`;
+      return out;
+    }
+
+    function scatterSvg(){
+      const w=850,h=420,p=54;
+      const x=v=>p+(v/100)*(w-p*2);
+      const y=v=>h-p-(v/100)*(h-p*2);
+      let out=`<svg viewBox="0 0 ${w} ${h}" width="100%" height="420" role="img" aria-label="期待と不安の2軸マップ">`;
+      out += `<rect x="${p}" y="${p}" width="${w-p*2}" height="${h-p*2}" fill="#fffdf8" stroke="#e2d5c4"/>`;
+      out += `<line x1="${x(50)}" x2="${x(50)}" y1="${p}" y2="${h-p}" stroke="#cfc2b1" stroke-dasharray="6 6"/>`;
+      out += `<line x1="${p}" x2="${w-p}" y1="${y(50)}" y2="${y(50)}" stroke="#cfc2b1" stroke-dasharray="6 6"/>`;
+      out += `<text x="${w/2}" y="${h-14}" text-anchor="middle" font-size="14" fill="#4a443d">期待度 →</text>`;
+      out += `<text x="18" y="${h/2}" transform="rotate(-90 18 ${h/2})" text-anchor="middle" font-size="14" fill="#4a443d">不安度 →</text>`;
+      personas.forEach((p0,idx)=>{
+        const color = p0.group.includes("low") ? "#b56b3c" : p0.group.includes("operator") ? "#6c8f6b" : p0.group.includes("fiscal") ? "#2f5f6f" : "#777";
+        out += `<circle cx="${x(p0.exp)}" cy="${y(p0.anxiety)}" r="6" fill="${color}" opacity=".85"><title>${p0.id} ${p0.name} 期待:${p0.exp} 不安:${p0.anxiety}</title></circle>`;
+        if(idx%2===0) out += `<text x="${x(p0.exp)+8}" y="${y(p0.anxiety)+4}" font-size="11" fill="#333">${p0.id}</text>`;
+      });
+      out += `<text x="${x(75)}" y="${y(80)}" font-size="13" fill="#6c665e">期待も不安も高い</text>`;
+      out += `<text x="${x(22)}" y="${y(80)}" font-size="13" fill="#6c665e">不安優位</text>`;
+      out += `<text x="${x(73)}" y="${y(25)}" font-size="13" fill="#6c665e">期待優位</text>`;
+      out += `</svg>`;
+      return out;
+    }
+
+    function renderPersonas(filter="all"){
+      const list = filter==="all" ? personas : personas.filter(p=>p.group.includes(filter));
+      $("#personaGrid").innerHTML = list.map(p=>`
+        <details class="persona">
+          <summary>
+            <span>${p.id}：${p.name}</span>
+            <span class="tag">${p.position}</span>
+          </summary>
+          <div class="persona-body">
+            <p class="muted">${p.attr}｜価値観：${p.values}｜初期感情：${p.emotion}｜関心：${p.interest}</p>
+            <div class="split">
+              <div class="quote"><strong>表向きの発言</strong><br>${p.say}</div>
+              <div class="quote"><strong>内心</strong><br>${p.inner}</div>
+            </div>
+            <ul>
+              <li><strong>初期反応：</strong>${p.initial}</li>
+              <li><strong>1か月後：</strong>${p.month}</li>
+              <li><strong>半年後：</strong>${p.half}</li>
+              <li><strong>最も効いた処置：</strong>${p.best}</li>
+              <li><strong>逆効果になりやすい処置：</strong>${p.bad}</li>
+              <li><strong>観測メモ：</strong>${p.memo}</li>
+            </ul>
+          </div>
+        </details>
+      `).join("");
+    }
+
+    $all(".pill").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        $all(".pill").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        renderPersonas(btn.dataset.filter);
+      });
+    });
+
+    renderScoreTable();
+    renderBars();
+    $("#timeChart").innerHTML=lineSvg();
+    $("#radarBox").innerHTML=radarLikeSvg();
+    $("#scatterChart").innerHTML=scatterSvg();
+    renderPersonas();
+  </script>
+</body>
+</html>
